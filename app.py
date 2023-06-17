@@ -1,11 +1,13 @@
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 
 class Todo(db.Model):
@@ -13,6 +15,7 @@ class Todo(db.Model):
     content = db.Column(db.String(200), nullable=False)
     completed = db.Column(db.Integer, default=0)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    category = db.Column(db.String(50), nullable=False)
 
     def __repr__(self):
         return "<Task %r>" % self.id
@@ -22,7 +25,8 @@ class Todo(db.Model):
 def index():
     if request.method == "POST":
         task_content = request.form["task"]
-        new_task = Todo(content=task_content)
+        task_category = request.form["category"]
+        new_task = Todo(content=task_content, category=task_category)
         try:
             db.session.add(new_task)
             db.session.commit()
@@ -30,8 +34,13 @@ def index():
         except:
             return "There is an issue"
     else:
-        tasks = Todo.query.order_by(Todo.pub_date).all()
+        category_filter = request.args.get("category")
+        if category_filter:
+            tasks = Todo.query.filter_by(category=category_filter).order_by(Todo.pub_date).all()
+        else:
+            tasks = Todo.query.order_by(Todo.pub_date).all()
         return render_template("index.html", tasks=tasks)
+
 
 
 @app.route("/delete/<int:id>")
