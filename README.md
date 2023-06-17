@@ -75,7 +75,8 @@ Here is a screenshot of the Flask Todo App:
 
 ![Flask Todo App](https://github.com/steve2700/flask-todo-app/blob/main/screenshots/Screenshot%20(4).png)
 
-
+The User Enters ThE TASK 
+![Flask Todo App](https://github.com/steve2700/flask-todo-app/blob/main/screenshots/Screenshot%20(5).png)
 
 
 
