@@ -16,6 +16,7 @@ class Todo(db.Model):
     completed = db.Column(db.Integer, default=0)
     pub_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     category = db.Column(db.String(50), nullable=False)
+    notes = db.Column(db.Text)
 
     def __repr__(self):
         return "<Task %r>" % self.id
@@ -40,7 +41,6 @@ def index():
         else:
             tasks = Todo.query.order_by(Todo.pub_date).all()
         return render_template("index.html", tasks=tasks)
-
 
 
 @app.route("/delete/<int:id>")

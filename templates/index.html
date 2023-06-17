@@ -22,12 +22,13 @@
                     <option value="">Select Category</option>
                     <option value="Work">Work</option>
                     <option value="Personal">Personal</option>
-		    <option value="Study">Study</option>
-		    <option value="Errands">Errands</option>
-
+                    <option value="Study">Study</option>
+                    <option value="Errands">Errands</option>
                     <!-- Add more categories as needed -->
                 </select>
-
+            </div>
+            <div class="form-group">
+                <textarea name="notes" placeholder="Task Notes" class="form-control-sm"></textarea>
             </div>
         </form>
     </div>
@@ -38,6 +39,7 @@
                     <th scope="col"><a href="?sort=content">Task</a></th>
                     <th scope="col"><a href="?sort=date">Date</a></th>
                     <th scope="col">Category</th>
+                    <th scope="col">Notes</th>
                     <th scope="col">Operation</th>
                 </tr>
             </thead>
@@ -47,6 +49,7 @@
                         <td>{{ task.content }}</td>
                         <td>{{ task.pub_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
                         <td>{{ task.category }}</td>
+                        <td>{{ task.notes }}</td>
                         <td>
                             <a href="/delete/{{ task.id }}" class="btn btn-danger btn-sm">Delete</a>
                             <a href="/update/{{ task.id }}" class="btn btn-warning btn-sm">Update</a>
