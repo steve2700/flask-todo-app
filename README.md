@@ -67,17 +67,15 @@ git clone https://github.com/steve2700/flask-todo-app/
 - User-friendly interface.
 - Responsive design for mobile and desktop.
 
-## Documentation
-
-
-
 ## Screenshots
 
-## Screenshots
+
 
 Here is a screenshot of the Flask Todo App:
 
-![Flask Todo App](C:/Users/Admin/Pictures/ScreenShots/Screenshot (5).png)
+![Flask Todo App](./screenshots/screenshot.png)
+
+
 
 
 
