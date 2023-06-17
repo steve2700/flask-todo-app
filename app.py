@@ -54,6 +54,7 @@ def update(id):
     task = Todo.query.get_or_404(id)
     if request.method == 'POST':
         task.content = request.form['task']
+        task.notes = request.form['notes']  # Add this line to update the notes field
         try:
             db.session.commit()
             return redirect('/')
@@ -61,6 +62,7 @@ def update(id):
             return 'There was an issue updating your task.'
     else:
         return render_template('update.html', task=task)
+
 
 
 if __name__ == '__main__':
