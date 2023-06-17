@@ -73,8 +73,13 @@ git clone https://github.com/steve2700/flask-todo-app/
 
 ## Screenshots
 
-![Screenshot 1](C:\Users\Admin\Pictures\ScreenShots\Screenshot (4).png)
-![Screenshot 2](C:\Users\Admin\Pictures\ScreenShots\Screenshot (5).png)
+## Screenshots
+
+Here is a screenshot of the Flask Todo App:
+
+![Flask Todo App](C:/Users/Admin/Pictures/ScreenShots/Screenshot (5).png)
+
+
 
 ## Contributing
 
