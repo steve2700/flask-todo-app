@@ -42,7 +42,7 @@ def delete(id):
         db.session.commit()
         return redirect("/")
     except:
-        return "This is an Problem while deleting"
+        return "There is a problem while deleting"
 
 
 @app.route("/update/<int:id>", methods=["POST", "GET"])
@@ -63,5 +63,8 @@ def update(id):
 
 
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
+
     app.run(debug=True, port=8000)
 
