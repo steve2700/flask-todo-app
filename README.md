@@ -67,17 +67,16 @@ git clone https://github.com/steve2700/flask-todo-app/
 - User-friendly interface.
 - Responsive design for mobile and desktop.
 
-## Documentation
-
-
-
 ## Screenshots
 
-## Screenshots
+
 
 Here is a screenshot of the Flask Todo App:
 
-![Flask Todo App](C:/Users/Admin/Pictures/ScreenShots/Screenshot (5).png)
+![Flask Todo App](https://github.com/steve2700/flask-todo-app/blob/main/screenshots/Screenshot%20(4).png)
+
+The User Enters ThE TASK 
+![Flask Todo App](https://github.com/steve2700/flask-todo-app/blob/main/screenshots/Screenshot%20(5).png)
 
 
 
@@ -93,6 +92,29 @@ This project is licensed under the [MIT License](LICENSE).
 
 - [Flask](https://flask.palletsprojects.com/) - The web framework used
 - [SQLAlchemy](https://www.sqlalchemy.org/) - Database toolkit for Python
+## Algorithm BEHIND THIS 
+The algorithm used in TaskBuddy revolves around the basic CRUD operations (Create, Read, Update, Delete) for managing tasks. Here's a breakdown of the algorithm:
+
+-Create Task:
+
+When a user submits a task through the interface, the algorithm creates a new task object.
+The task object is populated with the provided task content, category, and optional notes.
+The task object is then added to the database, storing the task details.
+-Read Tasks:
+
+The algorithm retrieves all tasks from the database.
+The tasks are sorted based on the publication date, ensuring the latest tasks appear first.
+The algorithm then presents the tasks to the user, displaying the task content, publication date, category, and notes (if any).
+-Update Task:
+
+When a user requests to update a specific task, the algorithm retrieves the task from the database based on its unique identifier.
+The task object is then updated with the new task content provided by the user.
+The updated task object is saved back to the database, reflecting the changes made by the user.
+-Delete Task:
+
+If a user chooses to delete a task, the algorithm identifies the task to be deleted based on its unique identifier.
+The task object is removed from the database, permanently deleting the task from the system.
+Overall, the algorithm ensures smooth interaction between the user interface and the database, allowing users to perform essential task management operations effectively. It leverages the capabilities of Flask, SQLAlchemy, and the underlying database to provide a seamless user experience in managing tasks within the TaskBuddy application.
 
 ## Future Development
 
