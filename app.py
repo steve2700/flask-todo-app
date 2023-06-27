@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime
 from huey import RedisHuey
+from sqlalchemy.exc import SQLAlchemyError
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
@@ -11,7 +13,8 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 # Configure Redis for Huey task queue
-huey = RedisHuey(url='redis://localhost:6379/0')
+huey = RedisHuey('flask_todo', host='localhost', port=6379)
+
 
 
 class Todo(db.Model):
@@ -29,6 +32,15 @@ class Todo(db.Model):
 @huey.task()
 def send_reminder(task_id):
     # Logic for sending reminder/notification
+    def create_huey(app):
+    huey = RedisHuey('flask_todo', host='localhost', port=6379)
+    return huey
+
+@app.before_first_request
+def initialize_huey():
+    global huey
+    huey = create_huey(app)
+
     task = Todo.query.get(task_id)
     if task:
         print(f"Sending reminder for task: {task.content}")
@@ -85,5 +97,6 @@ def update(id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', huey=huey)
+
 
