@@ -5,7 +5,6 @@ from datetime import datetime
 from huey import RedisHuey
 from sqlalchemy.exc import SQLAlchemyError
 
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -14,8 +13,6 @@ migrate = Migrate(app, db)
 
 # Configure Redis for Huey task queue
 huey = RedisHuey('flask_todo', host='localhost', port=6379)
-
-
 
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -32,18 +29,17 @@ class Todo(db.Model):
 @huey.task()
 def send_reminder(task_id):
     # Logic for sending reminder/notification
-    def create_huey(app):
-    huey = RedisHuey('flask_todo', host='localhost', port=6379)
-    return huey
-
-@app.before_first_request
-def initialize_huey():
-    global huey
-    huey = create_huey(app)
-
     task = Todo.query.get(task_id)
     if task:
         print(f"Sending reminder for task: {task.content}")
+
+
+def initialize_huey():
+    huey = RedisHuey('flask_todo', host='localhost', port=6379)
+
+@app.before_request
+def setup():
+    initialize_huey()
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -97,6 +93,6 @@ def update(id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', huey=huey)
-
+    app.huey = huey  # Store huey instance as an attribute of the app
+    app.run(debug=True, host='0.0.0.0')
 
