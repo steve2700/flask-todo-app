@@ -1,18 +1,16 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from datetime import datetime
 from huey import RedisHuey
-from sqlalchemy.exc import SQLAlchemyError
+import redis
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 
-# Configure Redis for Huey task queue
-huey = RedisHuey('flask_todo', host='localhost', port=6379)
+# Create a Redis client instance
+redis_client = redis.Redis(host='localhost', port=6379)
 
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -25,23 +23,6 @@ class Todo(db.Model):
     def __repr__(self):
         return '<Task %r>' % self.id
 
-
-@huey.task()
-def send_reminder(task_id):
-    # Logic for sending reminder/notification
-    task = Todo.query.get(task_id)
-    if task:
-        print(f"Sending reminder for task: {task.content}")
-
-
-def initialize_huey():
-    huey = RedisHuey('flask_todo', host='localhost', port=6379)
-
-@app.before_request
-def setup():
-    initialize_huey()
-
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
@@ -52,17 +33,19 @@ def index():
             db.session.add(new_task)
             db.session.commit()
 
-            # Queue reminder task
-            send_reminder(new_task.id)
+            # Add the task content to Redis set for notifications
+            redis_client.sadd('task_notifications', new_task.content)
 
             return redirect('/')
-        except SQLAlchemyError as e:
-            error_msg = str(e.__dict__.get('orig'))
-            return f'There was an issue adding your task: {error_msg}'
+        except Exception as e:
+            return f'There was an issue adding your task: {str(e)}'
     else:
         tasks = Todo.query.order_by(Todo.pub_date).all()
-        return render_template('index.html', tasks=tasks)
 
+        # Get task notifications from Redis set
+        task_notifications = redis_client.smembers('task_notifications')
+
+        return render_template('index.html', tasks=tasks, notifications=task_notifications)
 
 @app.route('/delete/<int:id>')
 def delete(id):
@@ -70,29 +53,16 @@ def delete(id):
     try:
         db.session.delete(task_to_delete)
         db.session.commit()
+
+        # Remove the task content from Redis set for notifications
+        redis_client.srem('task_notifications', task_to_delete.content)
+
         return redirect('/')
-    except SQLAlchemyError as e:
-        error_msg = str(e.__dict__.get('orig'))
-        return f'There was a problem deleting that task: {error_msg}'
-
-
-@app.route('/update/<int:id>', methods=['GET', 'POST'])
-def update(id):
-    task = Todo.query.get_or_404(id)
-    if request.method == 'POST':
-        task.content = request.form['task']
-        task.notes = request.form['notes']  # Add this line to update the notes field
-        try:
-            db.session.commit()
-            return redirect('/')
-        except SQLAlchemyError as e:
-            error_msg = str(e.__dict__.get('orig'))
-            return f'There was an issue updating your task: {error_msg}'
-    else:
-        return render_template('update.html', task=task)
-
+    except Exception as e:
+        return f'There was a problem deleting that task: {str(e)}'
 
 if __name__ == '__main__':
-    app.huey = huey  # Store huey instance as an attribute of the app
-    app.run(debug=True, host='0.0.0.0')
+    huey = RedisHuey('flask_todo', host='localhost', port=6379)
+
+    
 
