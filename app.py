@@ -4,7 +4,8 @@ from datetime import datetime
 from flask_mail import Mail, Message
 from flask_login import LoginManager, current_user, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from forms import Loginform
+from forms import LoginForm
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -114,20 +115,21 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        email = form.username.data
+        password = form.password.data
 
         user = User.query.filter_by(email=email).first()
         if not user or not user.check_password(password):
             flash('Invalid email or password.')
             return redirect('/login')
 
-        # User authentication successful
         login_user(user)
         return redirect('/')
-    else:
-        return render_template('login.html')
+
+    return render_template('login.html', form=form)
 
 
 @app.route('/logout')
