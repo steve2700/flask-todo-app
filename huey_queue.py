@@ -1,5 +1,6 @@
+from huey import RedisHuey
 from app import huey
-from huey.consumer import Consumer
 
-consumer = Consumer(huey)
+huey_consumer = huey.consumer()
+huey_consumer.run()
 

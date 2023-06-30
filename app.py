@@ -62,7 +62,5 @@ def delete(id):
         return f'There was a problem deleting that task: {str(e)}'
 
 if __name__ == '__main__':
-    huey = RedisHuey('flask_todo', host='localhost', port=6379)
-
-    
+    app.run(debug=True)
 
