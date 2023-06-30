@@ -17,10 +17,13 @@
 
 <body>
     <div class="container py-3 my-3">
-        {% block body %}
-        {% endblock %}
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
     </div>
-
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -36,3 +39,4 @@
 </body>
 
 </html>
+
