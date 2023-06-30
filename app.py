@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_mail import Mail, Message
-from flask_login import LoginManager, current_user
+from flask_login import LoginManager, current_user, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
@@ -21,6 +21,8 @@ app.config['MAIL_DEFAULT_SENDER'] = 'taskbuddy27@google.com'
 db = SQLAlchemy(app)
 mail = Mail(app)
 
+login_manager = LoginManager(app)
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -32,6 +34,11 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 
 class Todo(db.Model):
