@@ -5,6 +5,8 @@ from flask_mail import Mail, Message
 from flask_login import LoginManager, current_user, login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from forms import LoginForm
+from flask_migrate import Migrate
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
@@ -20,6 +22,8 @@ app.config['MAIL_PASSWORD'] = 'gogochuchu27'
 app.config['MAIL_DEFAULT_SENDER'] = 'taskbuddy27@google.com'
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
 mail = Mail(app)
 
 login_manager = LoginManager(app)
